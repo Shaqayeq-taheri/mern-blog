@@ -45,7 +45,7 @@ function Header() {
                 </Button>
 
                 <Link to="/signin">
-                    <Button className=" px-3 bg-transparent bg-gradient-to-r  from-indigo-700 via-blue-400 to-blue-500  text-white">
+                    <Button gradientDuoTone="purpleToBlue" outline >
                         Sign In
                     </Button>
                 </Link>
