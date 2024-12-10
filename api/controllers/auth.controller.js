@@ -5,7 +5,7 @@ import{StatusCodes} from "http-status-codes"
 
 
 export const signup= async(req,res)=>{
-   const {userName, email, password} = req.body
+   const {userName,familyName, email, password} = req.body
    const hashedPassword = bcryptjs.hashSync(password,10)
 
 
