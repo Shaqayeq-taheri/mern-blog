@@ -60,9 +60,9 @@ Adds a new key-value pair to the object. */
     };
     return (
         <div className="min-h-screen ">
-            <div className="flex gap-5 p-5 max-w-3xl mx-auto flex-col md:flex-row ">
+            <div className="flex p-5 gap-10 max-w-3xl mx-auto flex-col md:flex-row ">
                 {/* the logo and the left side of the page */}
-                <div className="flex-1 mt-5 md:mt-36">
+                <div className="flex-1 mt-5 md:mt-20">
                     <Link
                         to="/signup"
                         className=" text-nowrap text-4xl font-bold dark:text-white"
@@ -77,7 +77,7 @@ Adds a new key-value pair to the object. */
                     </p>
                 </div>
                 {/*the right side: the form */}
-                <div className="flex-1 mt-16">
+                <div className="flex-1 mt-8 md:mt-16">
                     <form
                         className="flex flex-col gap-3"
                         onSubmit={handleSubmit}
