@@ -17,10 +17,19 @@ export const signup= async(req,res)=>{
    })
    try {
     await newUser.save()
-    return res.status(StatusCodes.CREATED).json({message:"the user created successfully"})
-  } catch (error) {
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR) 
-      .json({ message: error.toString() });
+        .status(StatusCodes.CREATED)
+        .json({ success: true, message: "User created successfully" });
+  } catch (error) {
+    if (error.code === 11000) {
+        // MongoDB duplicate key error
+        return res
+            .status(StatusCodes.CONFLICT) // HTTP 409: Conflict
+            .json({ success: false, message: "Email already exists" });
+    }
+     return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "An unexpected error occurred" });
+  
   }
 }
