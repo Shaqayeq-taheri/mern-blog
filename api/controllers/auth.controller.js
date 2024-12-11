@@ -9,18 +9,15 @@ export const signup= async(req,res)=>{
    const hashedPassword = bcryptjs.hashSync(password,10)
 
 
-   try {
-    const user = await User.create({
-    
+   const newUser = new User({
      userName,
      familyName,
-      email,
-      password: hashedPassword,
-   
-    });
-    return res
-      .status(StatusCodes.CREATED)
-      .json({ message: "user created successfully", user });
+     email,
+     password:hashedPassword
+   })
+   try {
+    await newUser.save()
+    return res.status(StatusCodes.CREATED).json({message:"the user created successfully"})
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR) 

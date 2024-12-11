@@ -1,7 +1,30 @@
 import { Link } from "react-router-dom";
 import { Label, TextInput,Button } from "flowbite-react";
+import { useState } from "react";
 
 function SignUp() {
+  const [formData, setFormData]= useState({})
+  const handleChange=(e)=> {
+      /* [e.target.id]: e.target.value:
+Adds a new key-value pair to the object. */
+      setFormData({ ...formData, [e.target.id]: e.target.value });
+      console.log(formData)
+  }
+
+  const handleSubmit= async (e)=>{
+    e.preventDefault() /* the default behaviour of refreshing the page after submitting */
+
+    try {
+      const res = await fetch("/api/auth/signup",{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(formData)
+      });
+      const data = await res.json()
+    } catch (error) {
+      
+    }
+  }
     return (
         <div className="min-h-screen ">
             <div className="flex gap-5 p-5 max-w-3xl mx-auto flex-col md:flex-row ">
@@ -22,14 +45,14 @@ function SignUp() {
                 </div>
                 {/*the right side: the form */}
                 <div className="flex-1 mt-16">
-                    <form className="flex flex-col gap-3">
+                    <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                         <div>
                             <Label value="Enter your name:" />
                             <TextInput
                                 type="text"
                                 placeholder="Name"
                                 id="userName"
-                            />
+                            onChange={handleChange}/>
                         </div>
                         <div>
                             <Label value="Enter your family name:" />
@@ -37,15 +60,15 @@ function SignUp() {
                                 type="text"
                                 placeholder="Family Name"
                                 id="familyName"
-                            />
+                            onChange={handleChange}/>
                         </div>
                         <div>
                             <Label value="Enter your Email:" />
                             <TextInput
-                                type="text"
+                                type="email"
                                 placeholder="Email"
                                 id="email"
-                            />
+                            onChange={handleChange}/>
                         </div>
                         <div>
                             <Label value="Choose a Password:" />
@@ -53,7 +76,7 @@ function SignUp() {
                                 type="password"
                                 placeholder="Password"
                                 id="password"
-                            />
+                            onChange={handleChange}/>
                         </div>
                         <Button
                             gradientDuoTone="purpleToPink"
