@@ -126,7 +126,7 @@ Adds a new key-value pair to the object. */
                             {loading ? (
                                 <>
                                     <Spinner size="sm" />
-                                    <span>Loading ...</span>{" "}
+                                    <span> Loading ...</span>{" "}
                                 </>
                             ) : (
                                 "Sign Up"
