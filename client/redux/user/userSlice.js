@@ -20,7 +20,7 @@ const userSlice =createSlice({
 
         },
         signInSuccess:(state,action)=>{   //action is like the response
-            (state.currentUser = action.payload), //user data is payload exactly is data.message
+            (state.currentUser = action.payload), //user data is payload, exactly is data.message
                 (state.loading = false),
                 (state.success = "You are successfully signed in!"),
                 (state.error = null);
