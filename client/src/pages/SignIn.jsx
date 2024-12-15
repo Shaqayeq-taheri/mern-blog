@@ -1,13 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    sinInStart,
+    signInSuccess,
+    signInFailur,
+} from "../../redux/user/userSlice";
 
 function SignIn() {
     const [formData, setFormData] = useState({});
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const {
+        loading,
+        error: errorMessage,
+        success: successMessage,
+    } = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch(); // for dispatching the logics signinstart, ...
     const handleChange = (e) => {
         /* [e.target.id]: e.target.value:
 Adds a new key-value pair to the object. */
@@ -17,16 +26,14 @@ Adds a new key-value pair to the object. */
 
     const handleSubmit = async (e) => {
         e.preventDefault(); /* the default behaviour of refreshing the page after submitting */
-        if (
-       
-            !formData.email ||
-            !formData.password
-        ) {
-            return setErrorMessage("Please fill out all the fields!");
+        if (!formData.email || !formData.password) {
+            /*           return setErrorMessage("Please fill out all the fields!"); */
+          return dispatch(signInFailur("Please fill out all the fields!"));
         }
         try {
-            setLoading(true);
-            setErrorMessage(null); //better to clean it before sending req, maybe we had an error from previous attempt
+            /*  setLoading(true);
+            setErrorMessage(null) */ //better to clean it before sending req, maybe we had an error from previous attempt
+            dispatch(sinInStart());
             const res = await fetch("/api/auth/signin", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -34,27 +41,30 @@ Adds a new key-value pair to the object. */
             });
             const data = await res.json();
             if (res.status === 200) {
-                setSuccessMessage("You are successfully signed in!");
-                setLoading(false);
+                /* setSuccessMessage("You are successfully signed in!");
+                setLoading(false); */
+                dispatch(signInSuccess(data));
                 setTimeout(() => {
                     navigate("/");
-                }, 1000); // 2000ms = 2 seconds
+                }, 1000);
 
                 // Optionally redirect or reset the form
             } else if (res.status === 409) {
                 // Duplicate email error
-                setErrorMessage(data.message);
-                setSuccessMessage(null);
+                /*    setErrorMessage(data.message); */
+                dispatch(signInFailur(data.message));
+
             } else {
                 // Other errors
-                setErrorMessage(data.message || "An unexpected error occurred");
+                dispatch(signInFailur(data.message || "An unexpected error occurred"));
             }
         } catch (error) {
-            setErrorMessage(
+            /* setErrorMessage(
                 error.message
-            ); /* error of the client side, for example the client has internet issue */
+            ); // error of the client side, for example the client has internet issue 
             setSuccessMessage(null);
-            setLoading(false);
+            setLoading(false); */
+            dispatch(signInFailur());
         }
     };
     return (
@@ -71,8 +81,8 @@ Adds a new key-value pair to the object. */
                         </span>
                     </Link>
                     <p className="mt-5 text-sm">
-                        This is a demo project, you can
-                        easily sign in using your email and password or your google account.{" "}
+                        This is a demo project, you can easily sign in using
+                        your email and password or your google account.{" "}
                     </p>
                 </div>
                 {/*the right side: the form */}
@@ -81,8 +91,6 @@ Adds a new key-value pair to the object. */
                         className="flex flex-col gap-3"
                         onSubmit={handleSubmit}
                     >
-                       
-                      
                         <div>
                             <Label value="Enter your Email:" />
                             <TextInput
