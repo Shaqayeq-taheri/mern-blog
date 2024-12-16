@@ -54,7 +54,7 @@ export const signin = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "1d",
+            expiresIn: "5s",
         });
 
         /* for avoiding to return back the password */
@@ -70,3 +70,10 @@ export const signin = async (req, res) => {
             .json({ message: "An error occured in the server " });
     }
 };
+
+
+
+
+export const googleAuth = async(req, res)=>{
+
+}
