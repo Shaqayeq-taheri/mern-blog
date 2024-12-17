@@ -54,15 +54,15 @@ export const signin = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "5s",
+            expiresIn: "12h",
         });
 
         /* for avoiding to return back the password */
-        const {password:pass, ...rest}= user._doc
+        const { password: pass, ...rest } = user._doc;
         /*with this code a cookie is created with the name access_token which is a encrypted value id pf the user  */
         res.status(StatusCodes.OK)
             .cookie("access_token", token, { httpOnly: true })
-            .json({message:"sign in successfull", rest});
+            .json({ message: "sign in successfull", rest });
     } catch (error) {
         console.error("Error during signin occurred:", error);
         return res
@@ -71,9 +71,49 @@ export const signin = async (req, res) => {
     }
 };
 
-
-
-
-export const googleAuth = async(req, res)=>{
-
-}
+export const googleAuth = async (req, res) => {
+    /* the three info that coming from frontend OAth */
+    const { name, email, googlePhotoUrl } = req.body;
+    /* check if the user exists */
+    try {
+        const user = await User.findOne({ email });
+        if (user) {
+            /* if the user exists make a token */
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+            const { password, ...rest } = user._doc;
+            res.status(StatusCodes.OK)
+                .cookie("access_token", token, {
+                    httpOnly: true,
+                })
+                .json(rest);
+        } /* if the user is not exist, we should create the user with a random password,because since the name and email coming from google, we need a password */ else {
+            /* base-36 numeral system: Converts the random decimal number into a base-36 string: 0.123456789 */
+            const [userName, ...restFamilyName] = name.toLowerCase().split(" ");
+            const familyName = restFamilyName.join(" ");
+            console.log(userName, familyName);
+            const generatedRandomPassword =
+                Math.random().toString(36).slice(-8) +
+                Math.random().toString(36).slice(-8);
+            const hashedPassword = bcryptjs.hashSync(
+                generatedRandomPassword,
+                10
+            );
+            const newUser = new User({
+                userName,
+                familyName,
+                email,
+                password: hashedPassword,
+                profilePicture: googlePhotoUrl,
+            });
+            await newUser.save()
+            const token = jwt.sign({id:newUser._id}, process.env.JWT_SECRET)
+            const { password, ...rest }= newUser._doc
+            res.status(StatusCodes.OK).cookie('access_token',token, {httpOnly: true} ).json(rest)
+        }
+    } catch (error) {
+             console.error("Error during signin occurred:", error);
+              return res
+                  .status(StatusCodes.INTERNAL_SERVER_ERROR)
+                  .json({ message: "An error occured in the server " });
+    }
+};

@@ -17,18 +17,18 @@ function OAuth() {
         provider.setCustomParameters({prompt:'select_account'})
         try {
             const resultsFromGoogle = await signInWithPopup(auth,provider)
-            //console.log(resultsFromGoogle) send the info of the user which logged in using his/her google account to backend and save it
-            const res = await fetch('/api/auth/google', {
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({ 
+            console.log(resultsFromGoogle) //send the info of the user which logged in using his/her google account to backend and save it
+            const res = await fetch("/api/auth/google", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
                     //the info that from frontend is sent to backend
-                    name:resultsFromGoogle.user.displayName,
-                    email:resultsFromGoogle.user.email,
-                    googlePhotoUrl: resultsFromGoogle.user.photoURL
+                    name: resultsFromGoogle.user.displayName,
+                    email: resultsFromGoogle.user.email,
+                    googlePhotoUrl: resultsFromGoogle.user.photoURL,
                 }),
-            })
-            const data = res.json()
+            });
+            const data = await res.json()
             if(res.status===200){
           dispatch(signInSuccess(data));
           navigate('/')
