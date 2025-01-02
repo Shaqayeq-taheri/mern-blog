@@ -7,21 +7,24 @@ import Dashboard from "./pages/Dashboard"
 import Projects from "./pages/Projects"
 import Header from "./components/Header";
 import FooterComponent from "./components/Footer"
+import PrivateRoute from "./components/PrivateRoute";
 
 
 function App() {
     return (
         <BrowserRouter>
-        <Header/>
+            <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="signin" element={<SignIn />} />
+                <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/dashboard" element={<Dashboard/>}/>
+                <Route element={<PrivateRoute />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
                 <Route path="/projects" element={<Projects />} />
             </Routes>
-            <FooterComponent/>
+            <FooterComponent />
         </BrowserRouter>
     );
 }
