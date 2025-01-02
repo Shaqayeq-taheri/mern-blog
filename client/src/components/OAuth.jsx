@@ -30,10 +30,8 @@ function OAuth() {
             });
             const data = await res.json()
             if(res.status===200){
-         setTimeout(() => {
-             dispatch(clearMessages()); // Clear success after 1 second
-             navigate("/");
-         }, 2000);
+         dispatch(signInSuccess(data));
+         navigate("/");
             }
 
         } catch (error) {
