@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { theme } from "flowbite-react";
+
 
 const initialState = {
     theme: 'light'

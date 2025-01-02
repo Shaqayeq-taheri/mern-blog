@@ -4,8 +4,7 @@ import  userReducer  from './user/userSlice'
 import themeReducer from './theme/themeSlice'
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage"
-import { version } from 'mongoose'
-import { AiTwotoneProject } from 'react-icons/ai';
+
 
 
 const rootReducer = combineReducers({user:userReducer,

@@ -51,7 +51,7 @@ function Header() {
                 label={<Avatar alt="user" img={currentUser.profilePicture} rounded/>}
                 >
                     <Dropdown.Header>
-                        <span className="block text-sm">Hi {currentUser.userName.charAt(0).toUpperCase() + currentUser.userName.slice(1)} {currentUser.familyName.charAt(0).toUpperCase() + currentUser.familyName.slice(1)}</span>
+                        <span className="block text-sm">Hi {currentUser.userName.charAt(0).toUpperCase() + currentUser.userName.slice(1)} </span>
                     </Dropdown.Header>
                     <Link to={'/dashboard?tab=profile'}>
                     <Dropdown.Item>Profile</Dropdown.Item>
