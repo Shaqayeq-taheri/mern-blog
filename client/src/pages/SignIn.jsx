@@ -6,6 +6,7 @@ import {
     sinInStart,
     signInSuccess,
     signInFailur,
+    clearMessage
 } from "../../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 
@@ -46,6 +47,7 @@ Adds a new key-value pair to the object. */
                 setLoading(false); */
                 dispatch(signInSuccess(data));
                 setTimeout(() => {
+                 dispatch(clearMessage())
                     navigate("/");
                 }, 1000);
 

@@ -14,29 +14,34 @@ const userSlice =createSlice({
     initialState,
     reducers:{
         sinInStart:(state)=>{
-            state.loading=true,
-            state.success=null,
-            state.error=null //clear the previous errors
+            state.loading=true;
+            state.success=null;
+            state.error=null; //clear the previous errors
 
         },
         signInSuccess:(state,action)=>{   //action is like the response
-            (state.currentUser = action.payload), //user data is payload, exactly is data.message
-                (state.loading = false),
-                (state.success = "You are successfully signed in!"),
-                (state.error = null);
+            state.currentUser = action.payload; //user data is payload, exactly is data.message
+                state.loading = false;
+                state.success = "You are successfully signed in!";
+                state.error = null;
 
         },
         signInFailur:(state,action)=>{
-            state.loading=false,
-            state.success=null,
-            state.error=action.payload
+            state.loading=false;
+            state.success=null;
+            state.error=action.payload;
+        },
+        clearMessage:(state)=>{
+            state.loading=null;
+            state.success=null;
+
         }
 
 
     }
 })
 
-export const {sinInStart,signInSuccess,signInFailur} =userSlice.actions
+export const {sinInStart,signInSuccess,signInFailur,clearMessage} =userSlice.actions
 export default userSlice.reducer
 
 
