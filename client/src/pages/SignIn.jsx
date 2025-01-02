@@ -49,7 +49,7 @@ Adds a new key-value pair to the object. */
                 setTimeout(() => {
                  dispatch(clearMessage())
                     navigate("/");
-                }, 1000);
+                }, 3000);
 
                 // Optionally redirect or reset the form
             } else if (res.status === 409) {

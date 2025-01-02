@@ -29,12 +29,13 @@ function OAuth() {
                 }),
             });
             const data = await res.json()
-            if(res.status===200){
+           if(res.status===200){
          dispatch(signInSuccess(data));
          navigate("/");
-            }
+            } 
+        
 
-        } catch (error) {
+        }catch (error) {
             console.log(error)
         }
     }

@@ -1,11 +1,11 @@
 import React from "react";
-import { Navbar, TextInput, Button, NavbarLink, Dropdown, Avatar } from "flowbite-react";
+import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import {FaMoon, FaSun} from "react-icons/fa"
 import {useSelector, useDispatch} from "react-redux"
 import { toggleTheme } from "../../redux/theme/themeSlice";
-import { use } from "react";
+
 
 function Header() {
     const path= useLocation().pathname
