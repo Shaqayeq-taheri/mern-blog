@@ -2,10 +2,10 @@ import {Sidebar, SidebarItemGroup} from 'flowbite-react'
 import {HiArrowSmRight, HiUser} from 'react-icons/hi'
 import { useState,useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from "react-redux"; 
+
 
 function DashSidebar() {
-    const {theme} = useSelector(state=> state.theme)
+
      const location = useLocation();
      const [tab, setTab] = useState("");
      useEffect(() => {
