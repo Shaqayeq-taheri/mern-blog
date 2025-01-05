@@ -20,7 +20,7 @@ function Dashboard() {
                 <DashSidebar />
             </div>
             {/* profile */}
-            <div className=" w-full flex justify-center items-center">{tab === "profile" && <DashProfile />}</div>
+            <div className="w-full flex justify-center items-center">{tab === "profile" && <DashProfile />}</div>
         </div>
     );
 }
