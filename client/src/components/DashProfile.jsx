@@ -1,18 +1,44 @@
 import { TextInput, Button } from "flowbite-react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 function DashProfile() {
     const { currentUser } = useSelector((state) => state.user);
+    const [image, setImage] = useState(null);
+    const [imageFileUrl, setImageFileUrl] = useState(null);
+    const filePickerRef = useRef()
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            setImageFileUrl(URL.createObjectURL(file))
+        }
+    };
+
+    useEffect(()=>{
+        if(image){
+            uploadImage()
+        }
+    },[image])
+    const uploadImage= async ()=>{
+        console.log('the image is uploading')
+    }
     return (
-        <div
-            className="max-w-md w-full mt-5 mb-20 border border-gray-100 rounded-lg shadow-md p-5 overflow-y-auto"
-            style={{ maxHeight: "90vh" }}
-        >
+        <div className="max-w-md w-full mt-5 mb-20  p-5 overflow-y-auto">
             <h1 className="text-center mb-5 font-bold text-2xl">Profile</h1>
             <form className="flex flex-col gap-3">
-                <div className="w-24 h-24 self-center cursor-pointer shadow-md overflow-hidden rounded-full">
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    ref={filePickerRef}
+                    hidden
+                />{" "}
+                {/* save the image in a state */}
+                <div className="w-24 h-24 self-center cursor-pointer shadow-md overflow-hidden rounded-full" onClick={()=>filePickerRef.current.click()}>
                     <img
-                        src={currentUser.profilePicture}
+                        src={imageFileUrl || currentUser.profilePicture}
                         alt="user profile picture"
                         className="p-1 rounded-full w-full h-full object-cover border-4 border-gray-300"
                     />
