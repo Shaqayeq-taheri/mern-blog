@@ -1,29 +1,64 @@
-import { TextInput, Button } from "flowbite-react";
+import { TextInput, Button, Alert } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import {
+    getDownloadURL,
+    getStorage,
+    uploadBytesResumable,
+    ref,
+} from "firebase/storage";
+import { app } from "../firebase.js";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 function DashProfile() {
     const { currentUser } = useSelector((state) => state.user);
     const [image, setImage] = useState(null);
     const [imageFileUrl, setImageFileUrl] = useState(null);
-    const filePickerRef = useRef()
-
+    const [imageFileUploadProgress, setImageFileUploadProgress] =
+        useState(null);
+    const [imageFileUploadError, setImageFileUploadError] = useState(null);
+    const filePickerRef = useRef();
+    console.log(imageFileUploadProgress, imageFileUploadError);
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setImage(file);
-            setImageFileUrl(URL.createObjectURL(file))
+            setImageFileUrl(URL.createObjectURL(file));
         }
     };
 
-    useEffect(()=>{
-        if(image){
-            uploadImage()
+    useEffect(() => {
+        if (image) {
+            uploadImage();
         }
-    },[image])
-    const uploadImage= async ()=>{
-        console.log('the image is uploading')
-    }
+    }, [image]);
+    const uploadImage = async () => {
+        const storage = getStorage(app);
+        const fileName = new Date().getTime() + image.name;
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, image); // upload the image that is saved in image state
+        //to get the info of the image file like bites, error...
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                // snapshot is piece of info that you get while uploading byte by byte
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // how many percentage is uploaded
+                setImageFileUploadProgress(progress.toFixed(0));
+            },
+            (error) => {
+                setImageFileUploadError(
+                    "could not upload the image(file must be less that 2MB)"
+                );
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setImageFileUrl(downloadURL);
+                });
+            }
+        );
+    };
     return (
         <div className="max-w-md w-full mt-5 mb-20  p-5 overflow-y-auto">
             <h1 className="text-center mb-5 font-bold text-2xl">Profile</h1>
@@ -36,13 +71,36 @@ function DashProfile() {
                     hidden
                 />{" "}
                 {/* save the image in a state */}
-                <div className="w-24 h-24 self-center cursor-pointer shadow-md overflow-hidden rounded-full" onClick={()=>filePickerRef.current.click()}>
+                <div
+                    className="relative w-24 h-24 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+                    onClick={() => filePickerRef.current.click()}
+                >
+                    {imageFileUploadProgress && (
+                        <CircularProgressbar
+                            value={imageFileUploadProgress || 0}
+                            text={`${imageFileUploadProgress}%`}
+                            strokeWidth={5}
+                            styles={{root:{
+                                width:'100%',
+                                height:'100%',
+                                position:'absolute',
+                                top:0,
+                                left:0
+                            },
+                        path:{
+                            stroke: `rgba(62,152,199,${imageFileUploadProgress/100})` //opacity changes based on the uploading percentage
+                        }}}
+                        />
+                    )}
                     <img
                         src={imageFileUrl || currentUser.profilePicture}
                         alt="user profile picture"
-                        className="p-1 rounded-full w-full h-full object-cover border-4 border-gray-300"
+                        className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300`}
                     />
                 </div>
+                {imageFileUploadError && (
+                    <Alert color="failur">{imageFileUploadError}</Alert>
+                )}
                 <TextInput
                     type="text"
                     id="userName"
