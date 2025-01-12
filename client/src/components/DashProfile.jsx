@@ -34,6 +34,7 @@ function DashProfile() {
         }
     }, [image]);
     const uploadImage = async () => {
+        setImageFileUploadError(null) // if there is an error from  before
         const storage = getStorage(app);
         const fileName = new Date().getTime() + image.name;
         const storageRef = ref(storage, fileName);
@@ -51,6 +52,10 @@ function DashProfile() {
                 setImageFileUploadError(
                     "could not upload the image(file must be less that 2MB)"
                 );
+                setImageFileUploadProgress(null)
+                setImage(null)
+                setImageFileUrl(null)
+
             },
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -95,7 +100,7 @@ function DashProfile() {
                     <img
                         src={imageFileUrl || currentUser.profilePicture}
                         alt="user profile picture"
-                        className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300`}
+                        className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300 ${imageFileUploadProgress && imageFileUploadProgress < 100 && 'opacity-60'}`}
                     />
                 </div>
                 {imageFileUploadError && (
