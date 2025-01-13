@@ -10,6 +10,11 @@ import {
 import { app } from "../firebase.js";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { updateStart,updateSuccess,updateFailur } from "../../redux/user/userSlice.js";
+import { useDispatch } from "react-redux";
+
+
+
 
 function DashProfile() {
     const { currentUser } = useSelector((state) => state.user);
@@ -18,7 +23,12 @@ function DashProfile() {
     const [imageFileUploadProgress, setImageFileUploadProgress] =
         useState(null);
     const [imageFileUploadError, setImageFileUploadError] = useState(null);
+    const [formData, setFormData] = useState({});
     const filePickerRef = useRef();
+    const dispatch = useDispatch()
+
+
+
     console.log(imageFileUploadProgress, imageFileUploadError);
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -34,7 +44,7 @@ function DashProfile() {
         }
     }, [image]);
     const uploadImage = async () => {
-        setImageFileUploadError(null) // if there is an error from  before
+        setImageFileUploadError(null); // if there is an error from  before
         const storage = getStorage(app);
         const fileName = new Date().getTime() + image.name;
         const storageRef = ref(storage, fileName);
@@ -52,22 +62,58 @@ function DashProfile() {
                 setImageFileUploadError(
                     "could not upload the image(file must be less that 2MB)"
                 );
-                setImageFileUploadProgress(null)
-                setImage(null)
-                setImageFileUrl(null)
-
+                setImageFileUploadProgress(null);
+                setImage(null);
+                setImageFileUrl(null);
             },
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setImageFileUrl(downloadURL);
+                    setFormData({ ...formData, profilePicture: downloadURL });
                 });
             }
         );
     };
+
+    const handleChange=(e) =>{
+        setFormData({...formData, [e.target.id]:[e.target.value]})
+    }
+   // console.log(formData)
+    //console.log(currentUser.profilePicture);
+
+    const handleSubmit = async (e)=>{
+        e.preventDefault()
+        //to check if an obj is empty
+        if(object.keys(formData)===0){
+            return
+        }
+        //if there is something
+        try {
+            dispatch(updateStart())
+            const response = await fetch(`/api/users/update/${currentUser._id}`,{
+                method: 'PUT',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json()
+            if(!response.ok){
+                dispatch(updateFailur(data.message))
+                console.log('the update is not successfull')
+            }else{
+                dispatch(updateSuccess(data))
+                console.log('the user profile updated successfully')
+            }
+        } catch (error) {
+            console.log(error.message)
+            dispatch(updateFailur(error.message))
+        }
+    }
     return (
         <div className="max-w-md w-full mt-5 mb-20  p-5 overflow-y-auto">
             <h1 className="text-center mb-5 font-bold text-2xl">Profile</h1>
-            <form className="flex flex-col gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <input
                     type="file"
                     accept="image/*"
@@ -85,22 +131,30 @@ function DashProfile() {
                             value={imageFileUploadProgress || 0}
                             text={`${imageFileUploadProgress}%`}
                             strokeWidth={5}
-                            styles={{root:{
-                                width:'100%',
-                                height:'100%',
-                                position:'absolute',
-                                top:0,
-                                left:0
-                            },
-                        path:{
-                            stroke: `rgba(62,152,199,${imageFileUploadProgress/100})` //opacity changes based on the uploading percentage
-                        }}}
+                            styles={{
+                                root: {
+                                    width: "100%",
+                                    height: "100%",
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                },
+                                path: {
+                                    stroke: `rgba(62,152,199,${
+                                        imageFileUploadProgress / 100
+                                    })`, //opacity changes based on the uploading percentage
+                                },
+                            }}
                         />
                     )}
                     <img
                         src={imageFileUrl || currentUser.profilePicture}
                         alt="user profile picture"
-                        className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300 ${imageFileUploadProgress && imageFileUploadProgress < 100 && 'opacity-60'}`}
+                        className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300 ${
+                            imageFileUploadProgress &&
+                            imageFileUploadProgress < 100 &&
+                            "opacity-60"
+                        }`}
                     />
                 </div>
                 {imageFileUploadError && (
@@ -114,6 +168,7 @@ function DashProfile() {
                         currentUser.userName.charAt(0).toUpperCase() +
                         currentUser.userName.slice(1)
                     }
+                    onChange={handleChange}
                 />
                 <TextInput
                     type="text"
@@ -123,17 +178,20 @@ function DashProfile() {
                         currentUser.familyName.charAt(0).toUpperCase() +
                         currentUser.familyName.slice(1)
                     }
+                    onChange={handleChange}
                 />
                 <TextInput
                     type="email"
                     id="email"
                     placeholder="email"
                     defaultValue={currentUser.email}
+                    onChange={handleChange}
                 />
                 <TextInput
                     type="password"
                     id="password"
                     placeholder="************"
+                    onChange={handleChange}
                 />
                 <Button type="submit" gradientDuoTone="purpleToBlue" outline>
                     Update
