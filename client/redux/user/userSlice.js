@@ -46,7 +46,7 @@ const userSlice =createSlice({
             state.error=null;
 
         },
-        updateFailur:(state)=>{
+        updateFailur:(state,action)=>{
             state.loading=false;
             state.error=action.payload;
         }

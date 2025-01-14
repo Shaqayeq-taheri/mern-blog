@@ -26,6 +26,8 @@ function DashProfile() {
     const [formData, setFormData] = useState({});
     const filePickerRef = useRef();
     const dispatch = useDispatch()
+    const [updateUserSuccess, setUpdateUserSuccess]= useState(null)
+    const [updateUserError, setUpdateUserError]= useState(null)
 
 
 
@@ -75,19 +77,24 @@ function DashProfile() {
         );
     };
 
-    const handleChange=(e) =>{
-        setFormData({...formData, [e.target.id]:[e.target.value]})
-    }
-   // console.log(formData)
-    //console.log(currentUser.profilePicture);
+const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+};
+   console.log(formData)
+    console.log(currentUser.profilePicture);
 
     const handleSubmit = async (e)=>{
         e.preventDefault()
+        setUpdateUserError(null)
+        setUpdateUserSuccess(null)
         //to check if an obj is empty
-        if(object.keys(formData)===0){
+        if(Object.keys(formData).length===0){
+            setUpdateUserError("No changes were made")
             return
         }
         //if there is something
+        console.log(`/api/users/update/${currentUser._id}`);
+        console.log(currentUser);
         try {
             dispatch(updateStart())
             const response = await fetch(`/api/users/update/${currentUser._id}`,{
@@ -97,17 +104,21 @@ function DashProfile() {
                 },
                 body: JSON.stringify(formData)
             });
+            console.log(response)
             const data = await response.json()
             if(!response.ok){
                 dispatch(updateFailur(data.message))
                 console.log('the update is not successfull')
+                setUpdateUserError(data.message)
             }else{
                 dispatch(updateSuccess(data))
                 console.log('the user profile updated successfully')
+                setUpdateUserSuccess("User's profile updated successfully")
             }
         } catch (error) {
             console.log(error.message)
             dispatch(updateFailur(error.message))
+            setUpdateUserError(data.message)
         }
     }
     return (
@@ -201,6 +212,14 @@ function DashProfile() {
                 <span className="cursor-pointer">Delete Account</span>
                 <span className="cursor-pointer">Sign Out</span>
             </div>
+            {updateUserSuccess && (
+                <Alert color="success" className="mt-4">
+                    {updateUserSuccess}
+                </Alert>
+            )}
+            {updateUserError && (
+                <Alert color="failure" className="mt-4">{updateUserError}</Alert>
+            )}
         </div>
     );
 }
