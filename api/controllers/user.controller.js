@@ -5,8 +5,14 @@ import User from "../models/user.model.js";
 
 
 export const getAllUsers = async (req, res) => {
-    res.json({message:'the user api is working'})
-};
+try {
+    const allUsers = await User.find()
+    res.status(StatusCodes.OK).json(allUsers)
+} catch (error) {
+     return res
+         .status(StatusCodes.INTERNAL_SERVER_ERROR)
+         .json({ message: error.toString() });
+}};
 
 export const updateUser= async (req, res)=>{
 
