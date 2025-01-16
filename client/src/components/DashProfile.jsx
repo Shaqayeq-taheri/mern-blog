@@ -1,6 +1,6 @@
-import { TextInput, Button, Alert } from "flowbite-react";
+import { TextInput, Button, Alert, Modal } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector} from "react-redux";
 import {
     getDownloadURL,
     getStorage,
@@ -10,14 +10,19 @@ import {
 import { app } from "../firebase.js";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { updateStart,updateSuccess,updateFailur } from "../../redux/user/userSlice.js";
+import {
+    updateStart,
+    updateSuccess,
+    updateFailur,
+    deleteUserFailure,
+    deleteUserStart,
+    deleteUserSuccess
+} from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
-
-
-
+import { AiTwotoneExclamationCircle } from "react-icons/ai";
 
 function DashProfile() {
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser,error } = useSelector((state) => state.user);
     const [image, setImage] = useState(null);
     const [imageFileUrl, setImageFileUrl] = useState(null);
     const [imageFileUploadProgress, setImageFileUploadProgress] =
@@ -25,11 +30,10 @@ function DashProfile() {
     const [imageFileUploadError, setImageFileUploadError] = useState(null);
     const [formData, setFormData] = useState({});
     const filePickerRef = useRef();
-    const dispatch = useDispatch()
-    const [updateUserSuccess, setUpdateUserSuccess]= useState(null)
-    const [updateUserError, setUpdateUserError]= useState(null)
-
-
+    const dispatch = useDispatch();
+    const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
+    const [updateUserError, setUpdateUserError] = useState(null);
+    const [showModal, setShowModal] = useState(null);
 
     console.log(imageFileUploadProgress, imageFileUploadError);
     const handleImageChange = (e) => {
@@ -40,6 +44,24 @@ function DashProfile() {
         }
     };
 
+    const handleDelete =async ()=>{
+        setShowModal(false)
+         try {
+            dispatch(deleteUserStart())
+            const res = await fetch(`/api/users/deleteUser/${currentUser._id}`, {
+                method:'DELETE',
+
+            });
+            const data = await res.json()
+            if(!res.ok){
+                dispatch(deleteUserFailure(data.message))
+            }else{
+                dispatch(deleteUserSuccess(data))
+            }
+         } catch (error) {
+            dispatch(deleteUserFailure(error.message))
+         }
+    }
     useEffect(() => {
         if (image) {
             uploadImage();
@@ -77,50 +99,53 @@ function DashProfile() {
         );
     };
 
-const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-};
-   console.log(formData)
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+    console.log(formData);
     console.log(currentUser.profilePicture);
 
-    const handleSubmit = async (e)=>{
-        e.preventDefault()
-        setUpdateUserError(null)
-        setUpdateUserSuccess(null)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setUpdateUserError(null);
+        setUpdateUserSuccess(null);
         //to check if an obj is empty
-        if(Object.keys(formData).length===0){
-            setUpdateUserError("No changes were made")
-            return
+        if (Object.keys(formData).length === 0) {
+            setUpdateUserError("No changes were made");
+            return;
         }
         //if there is something
         console.log(`/api/users/update/${currentUser._id}`);
         console.log(currentUser);
         try {
-            dispatch(updateStart())
-            const response = await fetch(`/api/users/update/${currentUser._id}`,{
-                method: 'PUT',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-            console.log(response)
-            const data = await response.json()
-            if(!response.ok){
-                dispatch(updateFailur(data.message))
-                console.log('the update is not successfull')
-                setUpdateUserError(data.message)
-            }else{
-                dispatch(updateSuccess(data))
-                console.log('the user profile updated successfully')
-                setUpdateUserSuccess("User's profile updated successfully")
+            dispatch(updateStart());
+            const response = await fetch(
+                `/api/users/update/${currentUser._id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
+            console.log(response);
+            const data = await response.json();
+            if (!response.ok) {
+                dispatch(updateFailur(data.message));
+                console.log("the update is not successfull");
+                setUpdateUserError(data.message);
+            } else {
+                dispatch(updateSuccess(data));
+                console.log("the user profile updated successfully");
+                setUpdateUserSuccess("User's profile updated successfully");
             }
         } catch (error) {
-            console.log(error.message)
-            dispatch(updateFailur(error.message))
-            setUpdateUserError(data.message)
+            console.log(error.message);
+            dispatch(updateFailur(error.message));
+            setUpdateUserError(data.message);
         }
-    }
+    };
     return (
         <div className="max-w-md w-full mt-5 mb-20  p-5 overflow-y-auto">
             <h1 className="text-center mb-5 font-bold text-2xl">Profile</h1>
@@ -209,7 +234,12 @@ const handleChange = (e) => {
                 </Button>
             </form>
             <div className="text-red-500 flex justify-between mt-4">
-                <span className="cursor-pointer">Delete Account</span>
+                <span
+                    className="cursor-pointer"
+                    onClick={() => setShowModal(true)}
+                >
+                    Delete Account
+                </span>
                 <span className="cursor-pointer">Sign Out</span>
             </div>
             {updateUserSuccess && (
@@ -218,8 +248,43 @@ const handleChange = (e) => {
                 </Alert>
             )}
             {updateUserError && (
-                <Alert color="failure" className="mt-4">{updateUserError}</Alert>
+                <Alert color="failure" className="mt-4">
+                    {updateUserError}
+                </Alert>
             )}
+            {error && (
+                <Alert color="failure" className="mt-4">
+                    {error}
+                </Alert>
+            )}
+            <Modal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                popup
+                size="md"
+            >
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <AiTwotoneExclamationCircle className=" h-14 w-14 mx-auto" />
+
+                        <h3 className="mb-5 text-lg text-gray-600">
+                            Are you sure you want delete your account?
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button color="failure" onClick={handleDelete}>
+                                Yes, I'm sure.
+                            </Button>
+                            <Button
+                                color="gray"
+                                onClick={() => setShowModal(false)}
+                            >
+                                No, cancel it.
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }
