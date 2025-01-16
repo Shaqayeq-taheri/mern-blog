@@ -46,3 +46,27 @@ try {
 }
 
 }
+
+
+export const deleteUser = async(req, res) =>{
+
+    try {
+        if(req.user.id !== req.params.userId){
+            return res.status(StatusCodes.FORBIDDEN).json({message:'you are not allowed to delete the user'})
+        }
+
+        //check if the user exists 
+        const user= await User.findById(req.params.userId)
+        if(!user){
+            res.status(StatusCodes.NOT_FOUND).json({status:'error', message:'the user not found'})
+        }
+
+        //delete the user
+         await User.findByIdAndDelete(req.params.userId)
+         res.status(StatusCodes.OK).json({message:'the user is deleted successfully'})
+
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'there is an error during deleting the user', error})
+    }
+
+}
