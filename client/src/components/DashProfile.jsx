@@ -13,10 +13,11 @@ import "react-circular-progressbar/dist/styles.css";
 import {
     updateStart,
     updateSuccess,
-    updateFailur,
+    updateFailure,
     deleteUserFailure,
     deleteUserStart,
-    deleteUserSuccess
+    deleteUserSuccess,
+    signoutSuccess
 } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 import { AiTwotoneExclamationCircle } from "react-icons/ai";
@@ -62,6 +63,29 @@ function DashProfile() {
             dispatch(deleteUserFailure(error.message))
          }
     }
+
+
+    const handleSignout = async ()=>{
+        try {
+            const res = await fetch("/api/users/signout", {
+                method:'POST'
+            });
+            const data = await res.json()
+
+            if(!res.ok){
+                console.log(data.message)
+            }else{
+                dispatch(signoutSuccess())
+            }
+            
+        } catch (error) {
+            console.log(error.message)
+        }
+    } 
+
+
+
+
     useEffect(() => {
         if (image) {
             uploadImage();
@@ -103,7 +127,7 @@ function DashProfile() {
         setFormData({ ...formData, [e.target.id]: e.target.value });
     };
     console.log(formData);
-    console.log(currentUser.profilePicture);
+    console.log(currentUser.rest.profilePicture);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -132,7 +156,7 @@ function DashProfile() {
             console.log(response);
             const data = await response.json();
             if (!response.ok) {
-                dispatch(updateFailur(data.message));
+                dispatch(updateFailure(data.message));
                 console.log("the update is not successfull");
                 setUpdateUserError(data.message);
             } else {
@@ -142,7 +166,7 @@ function DashProfile() {
             }
         } catch (error) {
             console.log(error.message);
-            dispatch(updateFailur(error.message));
+            dispatch(updateFailure(error.message));
             setUpdateUserError(data.message);
         }
     };
@@ -184,7 +208,7 @@ function DashProfile() {
                         />
                     )}
                     <img
-                        src={imageFileUrl || currentUser.profilePicture}
+                        src={imageFileUrl || currentUser.rest.profilePicture}
                         alt="user profile picture"
                         className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300 ${
                             imageFileUploadProgress &&
@@ -201,8 +225,8 @@ function DashProfile() {
                     id="userName"
                     placeholder="Username"
                     defaultValue={
-                        currentUser.userName.charAt(0).toUpperCase() +
-                        currentUser.userName.slice(1)
+                        currentUser.rest.userName.charAt(0).toUpperCase() +
+                        currentUser.rest.userName.slice(1)
                     }
                     onChange={handleChange}
                 />
@@ -211,8 +235,8 @@ function DashProfile() {
                     id="familyName"
                     placeholder="Familyname"
                     defaultValue={
-                        currentUser.familyName.charAt(0).toUpperCase() +
-                        currentUser.familyName.slice(1)
+                        currentUser.rest.familyName.charAt(0).toUpperCase() +
+                        currentUser.rest.familyName.slice(1)
                     }
                     onChange={handleChange}
                 />
@@ -220,7 +244,7 @@ function DashProfile() {
                     type="email"
                     id="email"
                     placeholder="email"
-                    defaultValue={currentUser.email}
+                    defaultValue={currentUser.rest.email}
                     onChange={handleChange}
                 />
                 <TextInput
@@ -240,7 +264,7 @@ function DashProfile() {
                 >
                     Delete Account
                 </span>
-                <span className="cursor-pointer">Sign Out</span>
+                <span onClick={handleSignout} className="cursor-pointer">Sign Out</span>
             </div>
             {updateUserSuccess && (
                 <Alert color="success" className="mt-4">

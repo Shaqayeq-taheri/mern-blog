@@ -3,10 +3,10 @@ import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    sinInStart,
+    signInStart,
     signInSuccess,
-    signInFailur,
-    clearMessage
+    signInFailure,
+    clearMessage,
 } from "../../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 
@@ -30,12 +30,12 @@ Adds a new key-value pair to the object. */
         e.preventDefault(); /* the default behaviour of refreshing the page after submitting */
         if (!formData.email || !formData.password) {
             /*           return setErrorMessage("Please fill out all the fields!"); */
-          return dispatch(signInFailur("Please fill out all the fields!"));
+          return dispatch(signInFailure("Please fill out all the fields!"));
         }
         try {
             /*  setLoading(true);
             setErrorMessage(null) */ //better to clean it before sending req, maybe we had an error from previous attempt
-            dispatch(sinInStart());
+            dispatch(signInStart());
             const res = await fetch("/api/auth/signin", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -55,11 +55,11 @@ Adds a new key-value pair to the object. */
             } else if (res.status === 409) {
                 // Duplicate email error
                 /*    setErrorMessage(data.message); */
-                dispatch(signInFailur(data.message));
+                dispatch(signInFailure(data.message));
 
             } else {
                 // Other errors
-                dispatch(signInFailur(data.message || "An unexpected error occurred"));
+                dispatch(signInFailure(data.message || "An unexpected error occurred"));
             }
         } catch (error) {
             /* setErrorMessage(
@@ -67,7 +67,7 @@ Adds a new key-value pair to the object. */
             ); // error of the client side, for example the client has internet issue 
             setSuccessMessage(null);
             setLoading(false); */
-            dispatch(signInFailur());
+            dispatch(signInFailure());
         }
     };
     return (
