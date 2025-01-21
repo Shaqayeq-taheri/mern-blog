@@ -79,10 +79,10 @@ function Header() {
                 {currentUser ? (<Dropdown
                 arrowIcon={false}
                 inline
-                label={<Avatar alt="user" img={currentUser.rest.profilePicture} rounded/>}
+                label={<Avatar alt="user" img={currentUser.user.profilePicture} rounded/>}
                 >
                     <Dropdown.Header>
-                        <span className="block text-sm">Hi {currentUser.rest.userName.charAt(0).toUpperCase() + currentUser.rest.userName.slice(1)} </span>
+                        <span className="block text-sm">Hi {currentUser.user.userName.charAt(0).toUpperCase() + currentUser.user.userName.slice(1)} </span>
                     </Dropdown.Header> 
                     <Link to={'/dashboard?tab=profile'}>
                     <Dropdown.Item>Profile</Dropdown.Item>

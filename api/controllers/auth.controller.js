@@ -52,17 +52,21 @@ export const signin = async (req, res) => {
                 .status(StatusCodes.UNAUTHORIZED)
                 .json({ message: "Email or password does not match " });
         }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "1h",
-        });
+        //add isAdmin to the cookie of the browser
+        const token = jwt.sign(
+            { id: user._id, isAdmin: user.isAdmin },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1h",
+            }
+        );
 
         /* for avoiding to return back the password */
-        const { password: pass, ...rest } = user._doc;
+        const { password: pass, ...userData } = user._doc;
         /*with this code a cookie is created with the name access_token which is a encrypted value id pf the user  */
         res.status(StatusCodes.OK)
             .cookie("access_token", token, { httpOnly: true })
-            .json({ message: "sign in successfull", rest });
+            .json({ message: "sign in successfull", user: userData });
     } catch (error) {
         console.error("Error during signin occurred:", error);
         return res
@@ -79,13 +83,16 @@ export const googleAuth = async (req, res) => {
         const user = await User.findOne({ email });
         if (user) {
             /* if the user exists make a token */
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-            const { password, ...rest } = user._doc;
+            const token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin },
+                process.env.JWT_SECRET
+            );
+            const { password, ...userData } = user._doc;
             res.status(StatusCodes.OK)
                 .cookie("access_token", token, {
                     httpOnly: true,
                 })
-                .json(rest);
+                .json({ user: userData });
         } /* if the user is not exist, we should create the user with a random password,because since the name and email coming from google, we need a password */ else {
             /* base-36 numeral system: Converts the random decimal number into a base-36 string: 0.123456789 */
             const [userName, ...restFamilyName] = name.toLowerCase().split(" ");
@@ -105,15 +112,17 @@ export const googleAuth = async (req, res) => {
                 password: hashedPassword,
                 profilePicture: googlePhotoUrl,
             });
-            await newUser.save()
-            const token = jwt.sign({id:newUser._id}, process.env.JWT_SECRET)
-            const { password, ...rest }= newUser._doc
-            res.status(StatusCodes.OK).cookie('access_token',token, {httpOnly: true} ).json(rest)
+            await newUser.save();
+            const token = jwt.sign({ id: newUser._id, isAdmin:newUser.isAdmin }, process.env.JWT_SECRET);
+            const { password, ...userData } = newUser._doc;
+            res.status(StatusCodes.OK)
+                .cookie("access_token", token, { httpOnly: true })
+                .json({ message: "sign in successfull", user: userData });
         }
     } catch (error) {
-             console.error("Error during signin occurred:", error);
-              return res
-                  .status(StatusCodes.INTERNAL_SERVER_ERROR)
-                  .json({ message: "An error occured in the server " });
+        console.error("Error during signin occurred:", error);
+        return res
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({ message: "An error occured in the server " });
     }
 };

@@ -127,7 +127,7 @@ function DashProfile() {
         setFormData({ ...formData, [e.target.id]: e.target.value });
     };
     console.log(formData);
-    console.log(currentUser.rest.profilePicture);
+    console.log(currentUser.user.profilePicture);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -208,7 +208,7 @@ function DashProfile() {
                         />
                     )}
                     <img
-                        src={imageFileUrl || currentUser.rest.profilePicture}
+                        src={imageFileUrl || currentUser.user.profilePicture}
                         alt="user profile picture"
                         className={`p-1 rounded-full w-full h-full object-cover border-4 border-gray-300 ${
                             imageFileUploadProgress &&
@@ -225,8 +225,8 @@ function DashProfile() {
                     id="userName"
                     placeholder="Username"
                     defaultValue={
-                        currentUser.rest.userName.charAt(0).toUpperCase() +
-                        currentUser.rest.userName.slice(1)
+                        currentUser.user.userName.charAt(0).toUpperCase() +
+                        currentUser.user.userName.slice(1)
                     }
                     onChange={handleChange}
                 />
@@ -235,8 +235,8 @@ function DashProfile() {
                     id="familyName"
                     placeholder="Familyname"
                     defaultValue={
-                        currentUser.rest.familyName.charAt(0).toUpperCase() +
-                        currentUser.rest.familyName.slice(1)
+                        currentUser.user.familyName.charAt(0).toUpperCase() +
+                        currentUser.user.familyName.slice(1)
                     }
                     onChange={handleChange}
                 />
@@ -244,7 +244,7 @@ function DashProfile() {
                     type="email"
                     id="email"
                     placeholder="email"
-                    defaultValue={currentUser.rest.email}
+                    defaultValue={currentUser.user.email}
                     onChange={handleChange}
                 />
                 <TextInput
