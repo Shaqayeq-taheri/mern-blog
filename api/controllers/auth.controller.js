@@ -66,7 +66,7 @@ export const signin = async (req, res) => {
         /*with this code a cookie is created with the name access_token which is a encrypted value id pf the user  */
         res.status(StatusCodes.OK)
             .cookie("access_token", token, { httpOnly: true })
-            .json({ message: "sign in successfull", user: userData });
+            .json({ message: "sign in successfull", ...userData} );
     } catch (error) {
         console.error("Error during signin occurred:", error);
         return res
@@ -92,7 +92,7 @@ export const googleAuth = async (req, res) => {
                 .cookie("access_token", token, {
                     httpOnly: true,
                 })
-                .json({ user: userData });
+                .json(userData);
         } /* if the user is not exist, we should create the user with a random password,because since the name and email coming from google, we need a password */ else {
             /* base-36 numeral system: Converts the random decimal number into a base-36 string: 0.123456789 */
             const [userName, ...restFamilyName] = name.toLowerCase().split(" ");
