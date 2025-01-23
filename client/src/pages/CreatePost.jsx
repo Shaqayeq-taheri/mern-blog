@@ -33,14 +33,14 @@ function CreatePost() {
                       outline
                       size="sm"
                   >
-                      Upload Image
+                      Uploade Image
                   </Button>
               </div>
               <ReactQuill
                   theme="snow"
                   placeholder="Write something..."
                   required
-                  className="h-72 mb-12"
+                  className=" h-60 mb-12"
               />
               <Button type="submit" gradientDuoTone="purpleToPink">
                   Publish

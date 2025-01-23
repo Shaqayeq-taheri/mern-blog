@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 
 
 export const verifyToken = async (req, res, next)=>{
-    //getting the token
+    //getting the token from browser
     const token = req.cookies.access_token
     //verify the token
     if(!token){
