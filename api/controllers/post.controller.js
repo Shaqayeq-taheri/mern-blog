@@ -42,9 +42,14 @@ export const createPost = async (req, res) => {
 export const getAllPosts = async (req, res)=>{
     try {
 
+
+        /* stting up pagination */
         const startIndex = parseInt(req.query.startIndex) || 0
         const limit = parseInt(req.query.limit)|| 9
+       
         const sortDirection = req.query.order === 'asc' ? 1 : -1 //1 ascending , -1 descending
+        
+        /* query filters(based on userId, category and...) */
         const posts = await Post.find({
             ...(req.query.userId && {userId: req.query.userId}),
             ...(req.query.category && {category: req.query.category}),

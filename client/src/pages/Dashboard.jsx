@@ -21,9 +21,14 @@ function Dashboard() {
                 <DashSidebar />
             </div>
             {/* profile */}
-            <div className="w-full flex justify-center items-center">{tab === "profile" && <DashProfile />}</div>
-        {/* posts */}
-        {tab === "posts" && <DashPosts/>}
+            <div className="w-full flex justify-center items-center">
+                {tab === "profile" && <DashProfile />}
+            </div>
+            {/* posts */}
+            <div className="w-full flex justify-center items-center">
+                {" "}
+                {tab === "posts" && <DashPosts />}
+            </div>
         </div>
     );
 }
