@@ -45,7 +45,7 @@ export const getAllPosts = async (req, res)=>{
 
         /* stting up pagination */
         const startIndex = parseInt(req.query.startIndex) || 0
-        const limit = parseInt(req.query.limit)|| 9
+        const limit = parseInt(req.query.limit)|| 3
        
         const sortDirection = req.query.order === 'asc' ? 1 : -1 //1 ascending , -1 descending
         
