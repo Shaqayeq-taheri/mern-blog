@@ -8,8 +8,7 @@ import {
     TableHeadCell,
     TableRow,
 } from "flowbite-react";
-import {Link} from 'react-router-dom'
-
+import { Link } from "react-router-dom";
 
 function DashPosts() {
     const { currentUser } = useSelector((state) => state.user);
@@ -38,9 +37,13 @@ function DashPosts() {
     }, [currentUser._id]);
 
     return (
-        <div className="w-full flex justify-center p-3">
-            <div className="mx-auto table-auto overflow-x-scroll  p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-                {currentUser.isAdmin && userPosts.length > 0 ? (
+        <div
+            className="mx-auto table-auto overflow-x-scroll mt-3 p-3 
+            scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300
+             dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500"
+        >
+            {currentUser.isAdmin && userPosts.length > 0 ? (
+                <>
                     <Table hoverable className="shadow-md w-full">
                         <TableHead>
                             <TableHeadCell>Date Updated</TableHeadCell>
@@ -99,10 +102,10 @@ function DashPosts() {
                             ))}
                         </TableBody>
                     </Table>
-                ) : (
-                    <p>You do not have any posts yet!</p>
-                )}
-            </div>
+                </>
+            ) : (
+                <p>You do not have any posts yet!</p>
+            )}
         </div>
     );
 }

@@ -173,7 +173,7 @@ function DashProfile() {
         }
     };
     return (
-        <div className="max-w-md w-full mt-5 mb-20  p-5 overflow-y-auto">
+        <div className="mx-auto mt-5 mb-20  p-5 overflow-y-auto">
             <h1 className="text-center mb-5 font-bold text-2xl">Profile</h1>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <input

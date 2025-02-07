@@ -7,6 +7,7 @@ import DashPosts from "../components/DashPosts";
 function Dashboard() {
     const location = useLocation();
     const [tab, setTab] = useState("");
+
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
         const tabFromUrl = urlParams.get("tab");
@@ -14,20 +15,24 @@ function Dashboard() {
             setTab(tabFromUrl);
         }
     }, [location.search]);
+
     return (
-        <div className="min-h-screen flex flex-col md:flex-row">
-            {/* sidebar */}
+        <div className="flex md:flex-row flex-col min-h-screen">
+            {/* Sidebar */}
             <div className="md:w-56">
                 <DashSidebar />
             </div>
-            {/* profile */}
-            <div className="w-full flex justify-center items-center">
-                {tab === "profile" && <DashProfile />}
-            </div>
-            {/* posts */}
-            <div className="w-full flex justify-center items-center">
-                {" "}
-                {tab === "posts" && <DashPosts />}
+
+            {/* Main Content */}
+            <div className="flex flex-1 justify-center">
+                <div
+                    className={`w-full ${
+                        tab === "posts" ? "max-w-3xl" : "max-w-lg"
+                    }`}
+                >
+                    {tab === "profile" && <DashProfile />}
+                    {tab === "posts" && <DashPosts />}
+                </div>
             </div>
         </div>
     );
