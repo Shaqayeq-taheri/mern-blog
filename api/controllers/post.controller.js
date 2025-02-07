@@ -83,3 +83,21 @@ export const getAllPosts = async (req, res)=>{
         error: "Internal Server Error",
     });    }
 }
+
+
+
+
+export const deletePost = async(req, res)=>{
+    if(!req.user.isAdmin || req.user.id !== req.params.userId){
+        return res.status(StatusCodes.UNAUTHORIZED).json({message:'You are not allowed to delete this post'})
+    }
+    try {
+        await Post.findByIdAndDelete(req.params.postId)
+        res.status(StatusCodes.OK).json({message:'The post has been deleted successfully'})
+        
+    } catch (error) {
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+             error: "Internal Server Error",
+         });
+    }
+}
