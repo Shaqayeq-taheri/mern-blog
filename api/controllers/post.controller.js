@@ -114,15 +114,13 @@ export const updatePost= async(req,res)=>{
  }
  try {
     
-    const updatePost = await Post.findByIdAndUpdate(req.params.postId,
-       { $set:{
-            title:req.body.title,
-            content:req.body.content,
-            category:req.body.category,
-            image:req.body.image
-        }},{new:true}
-    )
-    res.status(StatusCodes.OK).json({message:'the post is updated successfully'})
+     const updatedPost = await Post.findByIdAndUpdate(
+         req.params.postId,
+         { $set: req.body },
+         { new: true }
+     );
+
+ res.status(200).json({ message: "Post updated", slug: updatedPost.slug });
  } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: "Internal Server Error",

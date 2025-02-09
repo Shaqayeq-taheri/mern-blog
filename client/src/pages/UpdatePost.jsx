@@ -12,6 +12,7 @@ import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
+import {useSelector} from 'react-redux'
 
 function UpdatePost() {
     const [file, setFile] = useState(null);
@@ -22,6 +23,7 @@ function UpdatePost() {
     const{postId}= useParams()
 
     const navigate = useNavigate();
+    const{currentUser}= useSelector((state)=>state.user)
 
 
     useEffect(()=>{
@@ -90,12 +92,21 @@ function UpdatePost() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+          if (!formData._id) {
+              console.error("Post ID is missing!");
+
+              return;
+          }
         try {
-            const res = await fetch("/api/post/create-post", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
+            //also is possible to take postId using useParams
+            const res = await fetch(
+                `/api/post/update-post/${formData._id}/${currentUser._id}`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData),
+                }
+            );
             const data = await res.json();
             if (!res.ok) {
                 setPublishError(data.message);
