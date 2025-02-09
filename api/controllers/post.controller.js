@@ -101,3 +101,32 @@ export const deletePost = async(req, res)=>{
          });
     }
 }
+
+
+export const updatePost= async(req,res)=>{
+
+
+    //if the user is not admin or is not the owner of the post
+ if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+     return res
+         .status(StatusCodes.UNAUTHORIZED)
+         .json({ message: "You are not allowed to delete this post" });
+ }
+ try {
+    
+    const updatePost = await Post.findByIdAndUpdate(req.params.postId,
+       { $set:{
+            title:req.body.title,
+            content:req.body.content,
+            category:req.body.category,
+            image:req.body.image
+        }},{new:true}
+    )
+    res.status(StatusCodes.OK).json({message:'the post is updated successfully'})
+ } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: "Internal Server Error",
+    });
+    
+ }
+}
