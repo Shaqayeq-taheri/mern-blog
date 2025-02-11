@@ -82,7 +82,7 @@ req.params.userId comes from the route parameter in the URL, such as /users/:use
 
 export const deleteUser = async (req, res) => {
     try {
-        if (req.user.id !== req.params.userId) {
+        if (!req.user.isAdmin && req.user.id !== req.params.userId) { //admin can delete the user , so if isAdmin is true, it does not chack the rest of condition
             return res
                 .status(StatusCodes.FORBIDDEN)
                 .json({ message: "you are not allowed to delete the user" });
