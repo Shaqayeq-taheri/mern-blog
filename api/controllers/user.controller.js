@@ -13,7 +13,7 @@ export const getAllUsers = async (req, res) => {
         const limit = parseInt(req.query.limit) || 9;
         const sortDirection = req.query.sort === "asc" ? 1 : -1;
 
-        const allUsers = await User.find()
+        const users = await User.find()
             .sort({ createdAt: sortDirection })
             .skip(startIndex) //skip beginning up to the startindex
             .limit(limit);
@@ -31,7 +31,7 @@ export const getAllUsers = async (req, res) => {
             createdAt: { $gte: oneMonthAgo },
         });
 
-        res.status(StatusCodes.OK).json({allUsers,totalUsers,lastMonthUsers});
+        res.status(StatusCodes.OK).json({users,totalUsers,lastMonthUsers});
 
 
     } catch (error) {
