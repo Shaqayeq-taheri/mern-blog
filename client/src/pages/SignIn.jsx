@@ -46,6 +46,7 @@ Adds a new key-value pair to the object. */
                 /* setSuccessMessage("You are successfully signed in!");
                 setLoading(false); */
                 dispatch(signInSuccess(data));
+                 
                 setTimeout(() => {
                  dispatch(clearMessage())
                     navigate("/");
@@ -70,6 +71,14 @@ Adds a new key-value pair to the object. */
             dispatch(signInFailure());
         }
     };
+        if (loading) {
+            return (
+                <div className="flex justify-center items-center min-h-screen">
+                    <Spinner size="xl" />
+                </div>
+            );
+        }
+ 
     return (
         <div className="min-h-screen ">
             <div className="flex p-5 gap-10 max-w-3xl mx-auto flex-col md:flex-row ">
