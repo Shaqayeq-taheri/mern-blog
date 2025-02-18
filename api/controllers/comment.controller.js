@@ -28,3 +28,18 @@ export const createComment = async (req, res)=>{
     }
 
 }
+
+export const getPostComments = async(req,res)=>{
+
+    try {
+        const comment = await Comment.find({postId: req.params.postId}).sort({createdAt:-1}) //sort based on the newest one
+        
+    } catch (error) {
+         console.error("Error getting the comments:", error);
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+             message:
+                 "An error occurred while getting the comments. Please try again later.",
+         });
+        
+    }
+}
