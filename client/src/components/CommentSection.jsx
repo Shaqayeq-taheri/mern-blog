@@ -31,6 +31,7 @@ function CommentSection({ postId }) {
             if (res.ok) {
                 setComment(""); //clear comment section
                 setCommentError(null);
+                setComments([data, ...comments]) //keep the previous comments and add the new ones
             }
         } catch (error) {
             console.log(error.message);
