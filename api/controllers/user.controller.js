@@ -122,3 +122,21 @@ export const signout = (req, res) => {
         });
     }
 };
+
+
+export const getUser = async(req, res)=>{
+    try {
+        const user = await User.findById(req.params.userId)
+        if(!user){
+            return res.status(StatusCodes.NOT_FOUND).json({message:"the user not found"})
+
+        }
+        res.status(StatusCodes.OK).json(user)
+        
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "An error occured fetching the user info",
+            error,
+        });
+    }
+}

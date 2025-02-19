@@ -33,7 +33,7 @@ export const getPostComments = async(req,res)=>{
 
     try {
         const comment = await Comment.find({postId: req.params.postId}).sort({createdAt:-1}) //sort based on the newest one
-        
+        res.status(StatusCodes.OK).json(comment)
     } catch (error) {
          console.error("Error getting the comments:", error);
          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

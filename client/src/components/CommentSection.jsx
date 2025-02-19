@@ -1,36 +1,58 @@
 import { Alert, Button, Textarea } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Comment from "./Comment";
 
 function CommentSection({ postId }) {
     const { currentUser } = useSelector((state) => state.user);
-    const[comment, setComment]= useState('')
-    const [commentError, setCommentError]= useState(null)
-    const handleSubmit= async(e)=>{
-        e.preventDefault()
-        if(comment.length > 200){
-            return
+    const [comment, setComment] = useState("");
+    const [commentError, setCommentError] = useState(null);
+    const [comments, setComments] = useState([]);
+
+    console.log("the fetched comments:", comments);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (comment.length > 200) {
+            return;
         }
         try {
-            
-            const res = await fetch("/api/comment/create-comment",{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({content: comment, postId, userId:currentUser._id})
+            const res = await fetch("/api/comment/create-comment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: comment,
+                    postId,
+                    userId: currentUser._id,
+                }),
             });
-            const data= await res.json()
-            if(res.ok){
-                setComment('')       //clear comment section
-                setCommentError(null) 
+            const data = await res.json();
+            if (res.ok) {
+                setComment(""); //clear comment section
+                setCommentError(null);
             }
         } catch (error) {
-            console.log(error.message)
-            setCommentError(error.message)
-            
+            console.log(error.message);
+            setCommentError(error.message);
         }
-
-    }
+    };
+    useEffect(() => {
+        const getComments = async () => {
+            try {
+                const res = await fetch(
+                    `/api/comment/getPostComments/${postId}`
+                );
+                const data = await res.json();
+                if (res.ok) {
+                    setComments(data);
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+        getComments();
+    }, [postId]);
     return (
         <div className="max-w-2xl mx-auto w-full p-3">
             {/* the info of the user who left the comment */}
@@ -91,6 +113,16 @@ function CommentSection({ postId }) {
                         </Alert>
                     )}
                 </form>
+            )}
+            {comments.length === 0 ? (
+                <p className="text-sm my-5">No comments yet!</p>
+            ) : (
+                <>
+                    <div>
+                        <p>{comments.length} Comments</p>
+                    </div>
+                    {comments.map(comment=>(<Comment key={comment._id} comment={comment}/>))}
+                </>
             )}
         </div>
     );
