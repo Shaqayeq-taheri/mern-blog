@@ -1,7 +1,7 @@
 import { Alert, Button, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 
 function CommentSection({ postId }) {
@@ -9,8 +9,11 @@ function CommentSection({ postId }) {
     const [comment, setComment] = useState("");
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
+    const navigate = useNavigate();
 
     console.log("the fetched comments:", comments);
+   
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +34,7 @@ function CommentSection({ postId }) {
             if (res.ok) {
                 setComment(""); //clear comment section
                 setCommentError(null);
-                setComments([data, ...comments]) //keep the previous comments and add the new ones
+                setComments([data, ...comments]); //keep the previous comments and add the new ones
             }
         } catch (error) {
             console.log(error.message);
@@ -54,6 +57,35 @@ function CommentSection({ postId }) {
         };
         getComments();
     }, [postId]);
+
+    const handleLike = async (commentId) => {
+         console.log("Liking comment with ID:", commentId);
+        try {
+            //check if the user is authenticated
+            if (!currentUser) {
+                navigate("/signin");
+            }
+
+            const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+                method: "PUT",
+            });
+            const data = await res.json();
+        setComments(
+            comments.map((comment) =>
+                comment._id === commentId
+                    ? {
+                          ...comment,
+                          likes: data.likes,
+                          numberOfLikes: data.likes.length,
+                      }
+                    : comment
+            )
+        );
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className="max-w-2xl mx-auto w-full p-3">
             {/* the info of the user who left the comment */}
@@ -122,7 +154,13 @@ function CommentSection({ postId }) {
                     <div>
                         <p>{comments.length} Comments</p>
                     </div>
-                    {comments.map(comment=>(<Comment key={comment._id} comment={comment}/>))}
+                    {comments.map((comment) => (
+                        <Comment
+                            key={comment._id}
+                            comment={comment}
+                            onLike={handleLike}
+                        />
+                    ))}
                 </>
             )}
         </div>

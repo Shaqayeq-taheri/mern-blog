@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
+import { AiFillLike } from "react-icons/ai";
+import { useSelector } from "react-redux";
 
-function Comment({ comment }) {
+
+function Comment({ comment , onLike}) {
+
     const [user, setUser] = useState({});
+    const {currentUser}=useSelector(state=>state.user)
 
     console.log("user data who left the comments ", user);
 
@@ -40,6 +45,23 @@ function Comment({ comment }) {
                         {moment(comment.createdAt).fromNow()}
                     </span>
                     <p className="text-gray-500 mb-2 pl-1">{comment.content}</p>
+                    <div className=" flex items-center gap-3 pt-2 ">
+                        <button
+                            onClick={() => onLike(comment._id)}
+                            type="button"
+                            className={` text-gray-400 hover:text-blue-500 ${
+                                currentUser &&
+                                comment.likes.includes(currentUser._id) &&
+                                `!text-blue-500`
+                            }`}
+                        >
+                            {/* which comment is being like */}
+                            <AiFillLike size={"16px"} />
+                        </button>
+                        <p className="text-gray-400">
+                            {comment.numberOfLikes + " " + (comment.numberOfLikes===1 ? "like" : "likes")}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
