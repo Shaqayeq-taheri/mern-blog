@@ -85,7 +85,7 @@ export const editComment = async (req, res) => {
                 .json({ message: "you are not allowed to edit the comment" });
         }
 
-        const editedComment = await Comment.findById(
+        const editedComment = await Comment.findByIdAndUpdate(
             req.params.commentId,
             {
                 content: req.body.content,
