@@ -12,8 +12,6 @@ function CommentSection({ postId }) {
     const navigate = useNavigate();
 
     console.log("the fetched comments:", comments);
-   
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,7 +57,7 @@ function CommentSection({ postId }) {
     }, [postId]);
 
     const handleLike = async (commentId) => {
-         console.log("Liking comment with ID:", commentId);
+        console.log("Liking comment with ID:", commentId);
         try {
             //check if the user is authenticated
             if (!currentUser) {
@@ -70,21 +68,31 @@ function CommentSection({ postId }) {
                 method: "PUT",
             });
             const data = await res.json();
-        setComments(
-            comments.map((comment) =>
-                comment._id === commentId
-                    ? {
-                          ...comment,
-                          likes: data.likes,
-                          numberOfLikes: data.likes.length,
-                      }
-                    : comment
-            )
-        );
+            setComments(
+                comments.map((comment) =>
+                    comment._id === commentId
+                        ? {
+                              ...comment,
+                              likes: data.likes,
+                              numberOfLikes: data.likes.length,
+                          }
+                        : comment
+                )
+            );
         } catch (error) {
             console.log(error);
         }
     };
+
+    //by editing the comment we should update the UI of the commnet section that's why we write it here
+    const handleEdit = async (comment, editedContent) => {
+       setComments((prev) =>
+           prev.map((c) =>
+               c._id === comment._id ? { ...c, content: editedContent } : c
+           )
+       );
+    };
+
 
     return (
         <div className="max-w-2xl mx-auto w-full p-3">
@@ -159,6 +167,7 @@ function CommentSection({ postId }) {
                             key={comment._id}
                             comment={comment}
                             onLike={handleLike}
+                            onEdit={handleEdit}
                         />
                     ))}
                 </>
