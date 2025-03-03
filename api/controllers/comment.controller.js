@@ -58,13 +58,47 @@ export const likeComment = async (req, res) => {
             comment.numberOfLikes -= 1;
             comment.likes.splice(userIndex, 1); //remove the index(user)
         }
-        await comment.save()
-        return res.status(StatusCodes.OK).json(comment)
+        await comment.save();
+        return res.status(StatusCodes.OK).json(comment);
     } catch (error) {
-         console.error("an error occured while liking the comment:", error);
-         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-             message:
-                 "An error occurred while liking the comment. Please try again later.",
-         });
+        console.error("an error occured while liking the comment:", error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message:
+                "An error occurred while liking the comment. Please try again later.",
+        });
+    }
+};
+
+export const editComment = async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        if (!comment) {
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ message: "the comment not found" });
+        }
+
+        //check if the owner of the comment is or the admin
+        if (comment.userId !== req.user.id && !req.user.isAdmin) {
+            return res
+                .status(StatusCodes.FORBIDDEN)
+                .json({ message: "you are not allowed to edit the comment" });
+        }
+
+        const editedComment = await Comment.findById(
+            req.params.commentId,
+            {
+                content: req.body.content,
+            },
+            { new: true }
+        );
+
+        res.status(StatusCodes.OK).json(editedComment)
+    } catch (error) {
+        console.error("an error occured while editing the comment:", error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message:
+                "An error occurred while editing the comment. Please try again later.",
+        });
     }
 };
