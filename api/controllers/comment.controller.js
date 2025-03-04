@@ -102,3 +102,32 @@ export const editComment = async (req, res) => {
         });
     }
 };
+
+
+export const deleteComment = async(req,res)=>{
+    try {
+
+        const comment = await Comment.findById(req.params._commentId)
+        if(!comment){
+            return res.status(StatusCodes.NOT_FOUND).json({message:'the comment not found'})
+        }
+        if(comment.userId !== req.user.id && !req.user.isAdmin){
+             return res
+                 .status(StatusCodes.FORBIDDEN)
+                 .json({ message: "you are not allowed to delete the comment" });
+
+        }
+
+        await Comment.findByIdAndDelete(req.params.commentId)
+        res.status(StatusCodes.OK).json({message:"the comment deleted successfully"})
+
+
+        
+    } catch (error) {
+         console.error("an error occured while deleting the comment:", error);
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+             message:
+                 "An error occurred while deleting the comment. Please try again later.",
+         });
+    }
+}
