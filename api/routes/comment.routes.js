@@ -4,6 +4,7 @@ import {
     getPostComments,
     likeComment,
     editComment,
+    deleteComment
 } from "../controllers/comment.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
 

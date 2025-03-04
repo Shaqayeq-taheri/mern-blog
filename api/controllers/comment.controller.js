@@ -107,7 +107,7 @@ export const editComment = async (req, res) => {
 export const deleteComment = async(req,res)=>{
     try {
 
-        const comment = await Comment.findById(req.params._commentId)
+        const comment = await Comment.findById(req.params.commentId)
         if(!comment){
             return res.status(StatusCodes.NOT_FOUND).json({message:'the comment not found'})
         }

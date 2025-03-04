@@ -1,8 +1,9 @@
-import { Alert, Button, Textarea } from "flowbite-react";
+import { Alert, Button, Textarea, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Comment from "./Comment";
+import { AiTwotoneExclamationCircle } from "react-icons/ai";
 
 function CommentSection({ postId }) {
     const { currentUser } = useSelector((state) => state.user);
@@ -10,6 +11,8 @@ function CommentSection({ postId }) {
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState(false);
 
     console.log("the fetched comments:", comments);
 
@@ -86,13 +89,36 @@ function CommentSection({ postId }) {
 
     //by editing the comment we should update the UI of the commnet section that's why we write it here
     const handleEdit = async (comment, editedContent) => {
-       setComments((prev) =>
-           prev.map((c) =>
-               c._id === comment._id ? { ...c, content: editedContent } : c
-           )
-       );
+        setComments((prev) =>
+            prev.map((c) =>
+                c._id === comment._id ? { ...c, content: editedContent } : c
+            )
+        );
     };
 
+    const handleDelete = async (commentId) => {
+        setShowModal(false)
+        try {
+            if (!currentUser) {
+                navigate("/signin");
+                return;
+            }
+            const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+                method: "DELETE",
+            });
+           
+        if (res.ok) {
+            setComments((prevComments) =>
+                prevComments.filter((comment) => comment._id !== commentId)
+            );
+        } else {
+            const errorData = await res.json();
+            console.log("Error:", errorData.message);
+        }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     return (
         <div className="max-w-2xl mx-auto w-full p-3">
@@ -168,10 +194,45 @@ function CommentSection({ postId }) {
                             comment={comment}
                             onLike={handleLike}
                             onEdit={handleEdit}
+                            onDelete={(commentId) => {
+                                setShowModal(true);
+                               setCommentToDelete(commentId); //this piece of state for keeping this commentId
+                            }}
                         />
                     ))}
                 </>
             )}
+            <Modal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                popup
+                size="md"
+            >
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <AiTwotoneExclamationCircle className=" h-14 w-14 mx-auto" />
+
+                        <h3 className="mb-5 text-lg text-gray-600">
+                            Are you sure you want delete this comment?
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button
+                                color="failure"
+                                onClick={() => handleDelete(commentToDelete)}
+                            >
+                                Yes, I'm sure.
+                            </Button>
+                            <Button
+                                color="gray"
+                                onClick={() => setShowModal(false)}
+                            >
+                                No, cancel it.
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }
