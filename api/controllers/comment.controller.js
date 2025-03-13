@@ -131,3 +131,31 @@ export const deleteComment = async(req,res)=>{
          });
     }
 }
+
+
+
+
+export const getAllComments = async (req, res)=>{
+    if(!req.user.isAdmin) return res.status(StatusCodes.FORBIDDEN).json({message:"only admin can get all the comments"})
+    try {
+const startIndex = parseInt(req.query.startIndex) || 0 //start from zero by default
+
+const limit = parseInt(req.query.limit) || 4
+const sortDirection= req.query.sort ==='desc'? -1 :1
+
+const comments = await Comment.find().sort({createdAt:sortDirection}).skip(startIndex).limit(limit)
+const totalComments = await Comment.countDocuments()
+const now = new Date()
+const oneMonthAgo = new Date(now.getFullYear(), now.getMonth()-1, now.getDate())
+const lastMonthsComments = await Comment.countDocuments({createdAt:{$gte:oneMonthAgo}}) //the comments that are greater than oneMonthAgo
+res.status(StatusCodes.OK).json({comments,totalComments,lastMonthsComments})
+
+
+} catch (error) {
+         console.error("an error occured while getting the comments:", error);
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+             message:
+                 "An error occurred while getting the comments. Please try again later.",
+         });
+    }
+}
