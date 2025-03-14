@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { signoutSuccess } from '../../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { FaRegComment } from "react-icons/fa";
 
 
 function DashSidebar() {
@@ -59,15 +60,26 @@ function DashSidebar() {
                       </Sidebar.Item>
                   </Link>
                   {currentUser.isAdmin && (
-                      <Link to="/dashboard?tab=posts">
-                          <Sidebar.Item
-                              active={tab === "posts"}
-                              icon={HiDocumentText}
-                              as="div"
-                          >
-                              Posts
-                          </Sidebar.Item>
-                      </Link>
+                      <>
+                          <Link to="/dashboard?tab=posts">
+                              <Sidebar.Item
+                                  active={tab === "posts"}
+                                  icon={HiDocumentText}
+                                  as="div"
+                              >
+                                  Posts
+                              </Sidebar.Item>
+                          </Link>
+                          <Link to="/dashboard?tab=comments">
+                              <Sidebar.Item
+                                  active={tab === "comments"}
+                                  icon={FaRegComment}
+                                  as="div"
+                              >
+                                  Comments
+                              </Sidebar.Item>
+                          </Link>
+                      </>
                   )}
                   {currentUser.isAdmin && (
                       <Link to="/dashboard?tab=users">
@@ -76,7 +88,7 @@ function DashSidebar() {
                               icon={HiOutlineUserGroup}
                               as="div"
                           >
-                             Users
+                              Users
                           </Sidebar.Item>
                       </Link>
                   )}

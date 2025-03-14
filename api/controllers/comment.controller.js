@@ -140,7 +140,7 @@ export const getAllComments = async (req, res)=>{
     try {
 const startIndex = parseInt(req.query.startIndex) || 0 //start from zero by default
 
-const limit = parseInt(req.query.limit) || 4
+const limit = parseInt(req.query.limit) || 9
 const sortDirection= req.query.sort ==='desc'? -1 :1
 
 const comments = await Comment.find().sort({createdAt:sortDirection}).skip(startIndex).limit(limit)
