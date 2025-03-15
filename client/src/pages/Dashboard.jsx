@@ -5,6 +5,7 @@ import DashProfile from "../components/DashProfile";
 import DashPosts from "../components/DashPosts";
 import DashUsers from '../components/DashUsers'
 import DashComponents from "../components/DashComponents";
+import DashboardComponent from "../components/DashboardComponent";
 
 function Dashboard() {
     const location = useLocation();
@@ -29,13 +30,16 @@ function Dashboard() {
             <div className="flex flex-1 justify-center">
                 <div
                     className={`w-full ${
-                        tab === "posts" || tab==="users" ||tab==="comments" ? "max-w-5xl" : "max-w-lg"
+                        tab === "posts" || tab === "users" || tab === "comments"
+                            ? "max-w-5xl"
+                            : "max-w-lg"
                     }`}
                 >
                     {tab === "profile" && <DashProfile />}
                     {tab === "posts" && <DashPosts />}
-                    {tab==='users' && <DashUsers/>}
-                    {tab==='comments' && <DashComponents/>}
+                    {tab === "users" && <DashUsers />}
+                    {tab === "comments" && <DashComponents />}
+                    {tab === "dash" && <DashboardComponent />}
                 </div>
             </div>
         </div>
