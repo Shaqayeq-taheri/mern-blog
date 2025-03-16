@@ -30,7 +30,7 @@ function Dashboard() {
             <div className="flex flex-1 justify-center">
                 <div
                     className={`w-full ${
-                        tab === "posts" || tab === "users" || tab === "comments"
+                        tab === "posts" || tab === "users" || tab === "comments" ||tab==='dash'
                             ? "max-w-5xl"
                             : "max-w-lg"
                     }`}
