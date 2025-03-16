@@ -6,6 +6,8 @@ import {
     HiDocumentText,
     HiAnnotation,
 } from "react-icons/hi";
+import { Link } from "react-router-dom";
+import { Button, Table } from "flowbite-react";
 
 function DashboardComponent() {
     const [users, setUsers] = useState([]);
@@ -73,9 +75,10 @@ function DashboardComponent() {
 
     return (
         <div className="p-3 mt-5">
+            {/* first part of dashboard the quick overview */}
             <div className="flex flex-wrap  gap-2 justify-center">
                 {/* total users container */}
-                <div className="p-3 bg-slate-100 dark:bg-slate-200  md:w-72 w-full  rounde shadow-lg">
+                <div className="rounded-md p-3 bg-slate-100 dark:bg-slate-500  md:w-72 w-full  rounde shadow-lg">
                     <div className=" p-3">
                         <div className="flex justify-between">
                             <div className="flex flex-col">
@@ -98,7 +101,7 @@ function DashboardComponent() {
                     </div>
                 </div>
                 {/* total comments container */}
-                <div className="p-3 bg-slate-100 dark:bg-slate-200  md:w-72 w-full rounde shadow-lg">
+                <div className="rounded-md p-3 bg-slate-100 dark:bg-slate-500  md:w-72 w-full rounde shadow-lg">
                     <div className=" p-3">
                         <div className="flex justify-between">
                             <div className="flex flex-col">
@@ -121,7 +124,7 @@ function DashboardComponent() {
                     </div>
                 </div>
                 {/* total posts container */}
-                <div className="p-3 bg-slate-100 dark:bg-slate-200  md:w-72 w-full rounde shadow-lg">
+                <div className="rounded-md p-3 bg-slate-100 dark:bg-slate-500  md:w-72 w-full rounde shadow-lg">
                     <div className=" p-3">
                         <div className="flex justify-between">
                             <div className="flex flex-col">
@@ -140,8 +143,120 @@ function DashboardComponent() {
                         <span className="text-green-500 flex items-center">
                             <HiArrowNarrowUp /> {lastMonthPosts}
                         </span>
-                        <div className="">Last Month</div>
+                        <div>Last Month</div>
                     </div>
+                </div>
+            </div>
+
+            {/* second part of dashboard , see all the users,comments,posts */}
+            <div className="flex flex-wrap gap-3 mt-4 mx-auto justify-center">
+                {/* users table */}
+                <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md  bg-slate-100 dark:bg-slate-500 ">
+                    <div className="flex justify-between p-3 text-sm">
+                        <h2 className="text-center p-2">Recent Users</h2>
+                        <Button outline gradientDuoTone="purpleToBlue">
+                            <Link to={"/dashboard?tab=users"}>See More</Link>
+                        </Button>
+                    </div>
+                    <Table hoverable>
+                        <Table.Head>
+                            <Table.HeadCell>User Image</Table.HeadCell>
+                            <Table.HeadCell>User Name</Table.HeadCell>
+                        </Table.Head>
+
+                        {users &&
+                            users.map((user) => (
+                                <Table.Body key={user._id} className="divide-y">
+                                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                        <Table.Cell>
+                                            <img
+                                                src={user.profilePicture}
+                                                alt="user"
+                                                className="w-10 h-10 rounded-full bg-gray-500"
+                                            />
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {user.userName} {user.familyName}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                </Table.Body>
+                            ))}
+                    </Table>
+                </div>
+                {/* comments table */}
+                <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md  bg-slate-100 dark:bg-slate-500 ">
+                    <div className="flex justify-between p-3 text-sm">
+                        <h2 className="text-center p-2">Recent Comments</h2>
+                        <Button outline gradientDuoTone="purpleToBlue">
+                            <Link to={"/dashboard?tab=comments"}>See More</Link>
+                        </Button>
+                    </div>
+                    <Table hoverable>
+                        <Table.Head>
+                            <Table.HeadCell>Comment Content</Table.HeadCell>
+                            <Table.HeadCell>Likes</Table.HeadCell>
+                        </Table.Head>
+                        <Table.Body className="bg-white">
+                            {comments &&
+                                comments.map((comment) => (
+                                    <Table.Row
+                                        key={comment._id}
+                                        className="bg-white dark:bg-gray-800"
+                                    >
+                                        <Table.Cell className="w-96">
+                                            <p className="line-clamp-2">
+                                                {comment.content}
+                                            </p>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {comment.numberOfLikes}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                ))}
+                        </Table.Body>
+                    </Table>
+                </div>
+                {/* posts table */}
+                <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md  bg-slate-100 dark:bg-slate-500 ">
+                    <div className="flex justify-between p-3 text-sm">
+                        <h2 className="text-center p-2 text-semibold">
+                            Recent Posts
+                        </h2>
+                        <Button outline gradientDuoTone="purpleToBlue">
+                            <Link to={"/dashboard?tab=posts"}>See More</Link>
+                        </Button>
+                    </div>
+                    <Table hoverable className="">
+                        <Table.Head>
+                            <Table.HeadCell>Post Image</Table.HeadCell>
+                            <Table.HeadCell>Post Title</Table.HeadCell>
+                            <Table.HeadCell>Category</Table.HeadCell>
+                        </Table.Head>
+
+                        {posts &&
+                            posts.map((post) => (
+                                <Table.Body
+                                    key={post._id}
+                                    className="divide-y "
+                                >
+                                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                        <Table.Cell>
+                                            <img
+                                                src={post.image}
+                                                alt="post"
+                                                className="w-14 h-14 rounded-md bg-gray-500"
+                                            />
+                                        </Table.Cell>
+                                        <Table.Cell className="w-96">
+                                            {post.title}
+                                        </Table.Cell>
+                                        <Table.Cell className="w-5">
+                                            {post.category}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                </Table.Body>
+                            ))}
+                    </Table>
                 </div>
             </div>
         </div>
