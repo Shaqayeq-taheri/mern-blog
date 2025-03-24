@@ -13,18 +13,21 @@ import CreatePost from "./pages/CreatePost"
 import UpdatePost from "./pages/UpdatePost";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
+import Search from "./pages/Search";
 
 
 function App() {
     return (
         <BrowserRouter>
-        <ScrollToTop/>
+            <ScrollToTop />
             <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/search" element={<Search />} />
+
                 <Route element={<PrivateRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                 </Route>
@@ -36,7 +39,7 @@ function App() {
                     />
                 </Route>
                 <Route path="/projects" element={<Projects />} />
-                <Route path="/post/:postSlug" element={<PostPage/>} />
+                <Route path="/post/:postSlug" element={<PostPage />} />
             </Routes>
             <FooterComponent />
         </BrowserRouter>
