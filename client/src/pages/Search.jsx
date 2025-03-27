@@ -1,6 +1,6 @@
-import { TextInput, Select, Button } from "flowbite-react";
+import { TextInput, Select, Button,PostCard } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { useLocation,useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Search() {
     const [sidebarData, setSidebarData] = useState({
@@ -8,14 +8,15 @@ function Search() {
         sort: "desc",
         category: "uncategorized",
     });
-    const [post, setPosts] = useState([]);
+    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showmore, setShowMore] = useState(false);
 
     const location = useLocation();
-    const navigate= useNavigate()
+    const navigate = useNavigate();
 
     console.log(sidebarData);
+    console.log("these are the posts", posts);
 
     useEffect(() => {
         //the things that we want to get from url:
@@ -75,14 +76,17 @@ function Search() {
         urlParams.set("searchTerm", sidebarData.searchTerm);
         urlParams.set("sort", sidebarData.sort);
         urlParams.set("category", sidebarData.category);
-        const searchQuery= urlParams.toString() //the url would be this url params but needed to change to string before navigating
-        navigate(`/search?${searchQuery}`)
+        const searchQuery = urlParams.toString(); //the url would be this url params but needed to change to string before navigating
+        navigate(`/search?${searchQuery}`);
     };
     return (
-        <div className="">
+        <div className="flex">
             <div className=" md:max-w-96 p-7 border-b md:border-r md:min-h-screen border-gray-500 ">
-                <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-                    <div className=" flex items-center gap-3">
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col gap-8 p-1"
+                >
+                    <div className=" flex items-center gap-3  ">
                         <label className="whitespace-nowrap font-semibold">
                             Search:
                         </label>
@@ -92,6 +96,7 @@ function Search() {
                             type="text"
                             value={sidebarData.searchTerm}
                             onChange={handleChange}
+                            className="w-full"
                         />
                     </div>
                     {/* select the sort mode */}
@@ -101,6 +106,7 @@ function Search() {
                             onChange={handleChange}
                             id="sort"
                             defaultValue={sidebarData.sort}
+                            className="w-full"
                         >
                             <option value="desc">Newest</option>
                             <option value="asc">Oldest</option>
@@ -113,14 +119,36 @@ function Search() {
                             onChange={handleChange}
                             id="category"
                             defaultValue={sidebarData.category}
+                            className="w-full"
                         >
                             <option value="uncategorized">Uncategorized</option>
                             <option value="movies">Movies</option>
                             <option value="series">Series</option>
                         </Select>
                     </div>
-                    <Button type="submit" outline gradientDuoTone="purpleToPink">Apply Filters</Button>
+                    <Button
+                        type="submit"
+                        outline
+                        gradientDuoTone="purpleToPink"
+                    >
+                        Apply Filters
+                    </Button>
                 </form>
+            </div>
+            <div className="w-full">
+                <h1 className="p-3 mt-5 text-3xl font-semibold sm:border-b border-gray-500">
+                    Posts Results
+                </h1>
+                <div className="p-7">
+                    {!loading && posts.length === 0 && (
+                        <p className="text-gray-500 text-xl">No posts found</p>
+                    )}
+                    {loading && (
+                        <p className="text-xl text-gray-500">Loading...</p>
+                    )}
+                    {!loading && posts && posts.map(
+                      (post)=> <PostCard key={post._id} post={post} />)} 
+                </div>
             </div>
         </div>
     );
