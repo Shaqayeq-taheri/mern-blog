@@ -1,4 +1,4 @@
-import { TextInput, Select, Button,PostCard } from "flowbite-react";
+import { TextInput, Select, Button,Card } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -147,7 +147,7 @@ function Search() {
                         <p className="text-xl text-gray-500">Loading...</p>
                     )}
                     {!loading && posts && posts.map(
-                      (post)=> <PostCard key={post._id} post={post} />)} 
+                      (post)=> <Card key={post._id} post={post} />)} 
                 </div>
             </div>
         </div>
