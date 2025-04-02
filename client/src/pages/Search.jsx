@@ -1,4 +1,4 @@
-import { TextInput, Select, Button,Card } from "flowbite-react";
+import { TextInput, Select, Button, Card } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -79,6 +79,28 @@ function Search() {
         const searchQuery = urlParams.toString(); //the url would be this url params but needed to change to string before navigating
         navigate(`/search?${searchQuery}`);
     };
+
+    const handleShowMore = async () => {
+        const numberOfPosts = posts.length;
+        const startIndex = numberOfPosts;
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.set("startIndex", startIndex);
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/post/allPosts?${searchQuery}`);
+        if (!res.ok) {
+            return;
+        }
+        if (res.ok) {
+            const data = await res.json();
+            setPosts([...posts, ...data.posts]);
+            if (!data.posts || data.posts.length === 0) return;
+            if (data.posts.length === 3) {
+                setShowMore(true);
+            } else {
+                setShowMore(false);
+            }
+        }
+    };
     return (
         <div className="flex">
             <div className=" md:max-w-96 p-7 border-b md:border-r md:min-h-screen border-gray-500 ">
@@ -139,15 +161,30 @@ function Search() {
                 <h1 className="p-3 mt-5 text-3xl font-semibold sm:border-b border-gray-500">
                     Posts Results
                 </h1>
-                <div className="p-7">
+                <div className="p-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {!loading && posts.length === 0 && (
                         <p className="text-gray-500 text-xl">No posts found</p>
                     )}
                     {loading && (
                         <p className="text-xl text-gray-500">Loading...</p>
                     )}
-                    {!loading && posts && posts.map(
-                      (post)=> <Card key={post._id} post={post} />)} 
+                    {!loading &&
+                        posts &&
+                        posts.map((post) => (
+                            <Card key={post._id} post={post}>
+                                <h5>{post.title}</h5>
+                                <img src={post.image} alt={post.title} />
+                            </Card>
+                        ))}
+
+                    {showmore && (
+                        <button
+                            onClick={handleShowMore}
+                            className="flex justify-center  text-teal-500 text-lg hover:underline p-7"
+                        >
+                            Show More
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
