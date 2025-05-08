@@ -47,6 +47,7 @@ function Header() {
             } else {
                 dispatch(signoutSuccess());
             }
+            navigate('/')
         } catch (error) {
             console.log(error.message);
         }

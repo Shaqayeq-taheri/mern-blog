@@ -1,6 +1,7 @@
 import { TextInput, Button, Alert, Modal } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+
 import { useSelector } from "react-redux";
 import {
     getDownloadURL,
@@ -38,7 +39,11 @@ function DashProfile() {
     const [updateUserError, setUpdateUserError] = useState(null);
     const [showModal, setShowModal] = useState(null);
 
+    const navigate = useNavigate()
+
     console.log(imageFileUploadProgress, imageFileUploadError);
+
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -80,6 +85,7 @@ function DashProfile() {
             } else {
                 dispatch(signoutSuccess());
             }
+            navigate('/')
         } catch (error) {
             console.log(error.message);
         }
