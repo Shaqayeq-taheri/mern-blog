@@ -172,13 +172,17 @@ function DashboardComponent() {
                                     >
                                         <Table.Cell>
                                             <img
-                                                src={user.profilePicture}
-                                                alt="user"
+                                                src={
+                                                    user?.profilePicture ||
+                                                    "/default-user.png"
+                                                }
+                                                alt={user?.userName || "user"}
                                                 className="w-10 h-10 rounded-full bg-gray-500"
                                             />
                                         </Table.Cell>
                                         <Table.Cell>
-                                            {user.userName} {user.familyName}
+                                            {user?.userName || "Unknown"}{" "}
+                                            {user?.familyName || ""}
                                         </Table.Cell>
                                     </Table.Row>
                                 ))}
