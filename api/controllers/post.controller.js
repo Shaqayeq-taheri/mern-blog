@@ -128,3 +128,24 @@ export const updatePost= async(req,res)=>{
     
  }
 }
+
+
+export const getSearchedPosts = async(req,res)=>{
+    const {searchTerm} = req.query
+
+    try {
+        const posts = Post.find({
+            //MongoDB query operator, search either title or content
+            $or: [
+                { title: { $regex: searchTerm, $options: "i" } }, //$options: 'i'means: case insensitiv
+                { content: { $regex: searchTerm, $options: "i" } },
+            ],
+        }).sort({ createdAt: -1 }); // Newest first
+
+        res.status(StatusCodes.OK).json(posts)
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            error: "Internal Server Error",
+        });
+    }
+}
